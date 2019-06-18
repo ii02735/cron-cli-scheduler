@@ -1,0 +1,11 @@
+command1:
+  cmd:  "ls -l >> helloCommand1.txt"
+  schedule: "*/3 * * * *"
+
+command2:
+  cmd:  "echo command2 >> helloCommand2.txt"
+  schedule: "* * * * *"
+
+command3:
+  cmd:  "php /var/www/html/cronJobs/console.php >> console.txt"
+  schedule: "*/3 * * *"

@@ -1,0 +1,23 @@
+{
+    "name": "bilaalyadallee/cron-jobs",
+    "authors": [
+        {
+            "name": "ik04346",
+            "email": "muhammad.yadallee1@etu.parisdescartes.fr"
+        }
+    ],
+    "require": {
+        "cron/cron": "^1.2",
+        "symfony/console": "^3.4",
+        "mtdowling/cron-expression": "^1.2",
+        "symfony/yaml": "^3.4"
+    },
+    "autoload": {
+        "psr-0": {
+            "App\\": "app/"
+        },
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}
