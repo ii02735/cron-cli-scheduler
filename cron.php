@@ -16,14 +16,16 @@ foreach($pdo->query("SELECT * FROM scheduler") as $task){
     if($task["active"] == 1){
         $job = new ShellJob();
         $job->setCommand($task["command"]);
-        $job->setSchedule(new CrontabSchedule($task["frequency"]));
+        $job->setSchedule(new CrontabSchedule($task["period"]));
         $resolver->addJob($job);
 
         /** @var CronExpression $cronExpression */
-        $cronExpression = CronExpression::factory($task["frequency"]);
+        $cronExpression = CronExpression::factory($task["period"]);
 
-        $pdo->prepare("UPDATE scheduler set scheduler.LastExecution=? WHERE command=?")->execute([date("Y-m-d H:i"),$task["command"]]);
-        $pdo->prepare("UPDATE scheduler set scheduler.NextExecution=? WHERE command=?")->execute([$cronExpression->getNextRunDate()->format("Y-m-d H:i"),$task["command"]]);
+        if($cronExpression->isDue()){
+        $pdo->prepare("UPDATE scheduler set scheduler.LastExecution=? WHERE name=?")->execute([date("Y-m-d H:i"),$task["name"]]);
+        $pdo->prepare("UPDATE scheduler set scheduler.NextExecution=? WHERE name=?")->execute([$cronExpression->getNextRunDate()->format("Y-m-d H:i"),$task["name"]]);
+        }
     }
 }
 

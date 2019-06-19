@@ -8,4 +8,9 @@ command2:
 
 command3:
   cmd:  "php /var/www/html/cronJobs/console.php >> console.txt"
-  schedule: "*/3 * * *"
+  schedule: "*/6 * * * *"
+  disabled: true
+
+commandDate:
+  cmd: php -r 'echo date("Y-m-d h:i:s")."\n";' >> tracePHPDate.txt
+  schedule: "* * * * *"

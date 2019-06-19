@@ -4,6 +4,8 @@
 namespace App;
 
 
+use Cron\CronExpression;
+use Cron\Schedule\CrontabSchedule;
 use http\Exception\RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -26,6 +28,7 @@ class CronSchedulerAddCommand extends Command
     public function __construct($name = null)
     {
         parent::__construct($name);
+        $this->pdo = require __DIR__."/connection.php";
         $yamlFile = Yaml::parseFile(__DIR__."/commandes.yml");
         foreach($yamlFile as $key => $value)
             $this->commandsYaml[$key] = $value;
@@ -53,8 +56,14 @@ class CronSchedulerAddCommand extends Command
 
         $io->newLine(2);
 
-        $infoBlock = new OutputFormatterStyle("white","black");
+        $infoBlock = new OutputFormatterStyle("white","default");
         $output->getFormatter()->setStyle("default",$infoBlock);
+
+        $header = new OutputFormatterStyle("yellow","default");
+        $output->getFormatter()->setStyle("header",$header);
+
+        $success = new OutputFormatterStyle("green","default");
+        $output->getFormatter()->setStyle("success",$success);
 
         $io->writeln("Commandes disponibles");
         $io->newLine();
@@ -66,7 +75,7 @@ class CronSchedulerAddCommand extends Command
 
         $io->listing($listing);
 
-        $input = $io->ask("<default>Nom de la commande à enregistrer</>",null,function($name){
+        $input = $io->ask("<default>Nom de la tâche à enregistrer</>",null,function($name){
 
             if(!key_exists($name,$this->commandsYaml))
                 throw new \RuntimeException("Saisie invalide");
@@ -85,22 +94,25 @@ class CronSchedulerAddCommand extends Command
             '|    +-------------------- heure (0 - 23)',
             '+------------------------- min (0 - 59)',
             '',
-            '*/x => Toutes les x min/heures/jours...'
+            '*/x => Toutes les xème min/heures/jours...'
         ]);
-        $freq = $io->ask("<default>Planification d'exécution</>",$this->commandsYaml[$input]['schedule'],function($command){
+        $freq = $io->ask("<default>Période d'exécution</>",$this->commandsYaml[$input]['schedule'],function($command){
 
             return (string)$command;
         });
-        $this->pdo = require __DIR__."/connection.php";
-        $sql = "INSERT INTO scheduler (name,command,CreationDate,frequency) values (?,?,?,?)";
+        $active = (isset($this->commandsYaml[$input]["disabled"]) && $this->commandsYaml[$input]["disabled"] == "true")?0:1;
+        $nextDate = ($active == 1)?CronExpression::factory($freq)->getNextRunDate()->format("Y-m-d H:i"):null;
+        $sql = "INSERT INTO scheduler (name,command,CreationDate,period,NextExecution,active) values (?,?,?,?,?,?)";
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $statement = $this->pdo->prepare($sql);
-        $execution = $statement->execute([$input,$this->commandsYaml[$input]["cmd"],date('Y-m-d H:i'),$freq]);
-
-        if(!$execution) {
-            echo "ERROR\n";
-            die(print_r($this->pdo->errorCode()));
+        $statement->execute([$input,$this->commandsYaml[$input]["cmd"],date("Y-m-d H:i"),$freq,($nextDate),$active]);
+        if($this->pdo->errorCode() == "00000")
+        {
+            $io->writeln("<success>Ajout de la tâche <header>".$input ."</> avec succès !</>");
         }
 
     }
+
 
 }
