@@ -1,8 +1,10 @@
 <?php
 
-namespace App;
+namespace CronScheduler;
 
 use Cron\CronExpression;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use http\Exception\RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -16,8 +18,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CronSchedulerListCommand extends Command
 {
     protected static $defaultName = "cron:scheduler:list";
-    /** @var \PDO $pdo */
     private $pdo;
+    /** @var EntityManager $pdo */
+    //private $em;
     protected function configure()
     {
         $this->setDescription("Liste les différentes tâches CRON")
@@ -26,6 +29,14 @@ class CronSchedulerListCommand extends Command
              ->addOption("toggle","t",InputOption::VALUE_REQUIRED,"Activer/désaciver une tâche")
              ->addOption("set","s",InputOption::VALUE_REQUIRED,"Modifier la période d'une tâche");
         $this->pdo = include __DIR__."/connection.php";
+    }
+
+    public function __construct(/*EntityManagerInterface $em,*/$name = null)
+    {
+        //$this->em = $em;
+        $this->pdo = require __DIR__."/connection.php";
+        parent::__construct($name);
+
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

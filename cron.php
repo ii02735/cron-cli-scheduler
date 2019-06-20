@@ -10,7 +10,7 @@ use Cron\Schedule\CrontabSchedule;
 require __DIR__."/vendor/autoload.php";
 
 /** @var PDO $pdo */
-$pdo = include __DIR__."/app/connection.php";
+$pdo = include __DIR__ . "/src/connection.php";
 $resolver = new ArrayResolver();
 foreach($pdo->query("SELECT * FROM scheduler") as $task){
     if($task["active"] == 1){

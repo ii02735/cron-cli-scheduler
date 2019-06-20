@@ -1094,7 +1094,9 @@
     <table id="354" parent="2" name="res_partenaire"/>
     <table id="355" parent="2" name="res_unipro"/>
     <table id="356" parent="2" name="reservation"/>
-    <table id="357" parent="2" name="scheduler"/>
+    <table id="357" parent="2" name="scheduler">
+      <Collation>utf8_unicode_ci</Collation>
+    </table>
     <table id="358" parent="2" name="stop_sell"/>
     <table id="359" parent="2" name="stop_sell_history">
       <Collation>utf8_general_ci</Collation>
@@ -12345,7 +12347,7 @@ categorie</ColNames>
       <NotNull>1</NotNull>
       <ColumnKind>normal</ColumnKind>
     </column>
-    <column id="2400" parent="357" name="period">
+    <column id="2400" parent="357" name="frequency">
       <Position>4</Position>
       <DataType>varchar(21)|0s</DataType>
       <NotNull>1</NotNull>
@@ -12364,7 +12366,6 @@ categorie</ColNames>
     <column id="2403" parent="357" name="active">
       <Position>7</Position>
       <DataType>tinyint(1)|0s</DataType>
-      <DefaultExpression>1</DefaultExpression>
       <ColumnKind>normal</ColumnKind>
     </column>
     <key id="2404" parent="357" name="PRIMARY">

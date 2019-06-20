@@ -10,14 +10,25 @@
         "cron/cron": "^1.2",
         "symfony/console": "^3.4",
         "mtdowling/cron-expression": "^1.2",
-        "symfony/yaml": "^3.4"
+        "symfony/yaml": "^3.4",
+        "doctrine/orm": "^2.5",
+        "symfony/dependency-injection": "^3.4",
+        "symfony/config": "^3.4"
     },
     "autoload": {
         "psr-0": {
-            "App\\": "app/"
+            "CronScheduler\\": "src/"
         },
         "psr-4": {
-            "App\\": "app/"
+            "CronScheduler\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "CronScheduler\\": "src/"
+        },
+        "psr-4": {
+            "CronScheduler\\": "src/"
         }
     }
 }

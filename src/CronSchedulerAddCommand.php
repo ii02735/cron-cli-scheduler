@@ -1,11 +1,15 @@
 <?php
 
 
-namespace App;
+namespace CronScheduler;
 
 
 use Cron\CronExpression;
 use Cron\Schedule\CrontabSchedule;
+use CronScheduler\Entity\Scheduler;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use http\Exception\RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
@@ -19,16 +23,18 @@ use Symfony\Component\Yaml\Yaml;
 class CronSchedulerAddCommand extends Command
 {
     protected static $defaultName = "cron:scheduler:add";
-    /** @var \PDO $pdo */
+    /** @var $pdo */
     private $pdo;
+    //private $em;
 
     /** @var array $yamlFile*/
     private $commandsYaml;
 
-    public function __construct($name = null)
+    public function __construct(/*EntityManagerInterface $em*/$name = null)
     {
-        parent::__construct($name);
         $this->pdo = require __DIR__."/connection.php";
+        parent::__construct($name);
+        //$this->em = $em;
         $yamlFile = Yaml::parseFile(__DIR__."/commandes.yml");
         foreach($yamlFile as $key => $value)
             $this->commandsYaml[$key] = $value;
@@ -102,6 +108,15 @@ class CronSchedulerAddCommand extends Command
         });
         $active = (isset($this->commandsYaml[$input]["disabled"]) && $this->commandsYaml[$input]["disabled"] == "true")?0:1;
         $nextDate = ($active == 1)?CronExpression::factory($freq)->getNextRunDate()->format("Y-m-d H:i"):null;
+
+        /** @var Scheduler $scheduler */
+        /*$scheduler = new Scheduler();
+        $scheduler->setName($input);
+        $scheduler->setCommand($this->commandsYaml[$input]["cmd"]);
+        $scheduler->setNextexecution(new \DateTime("now"));
+        $scheduler->setActive($active);
+        $this->em->persist($scheduler);
+        $this->em->flush();*/
         $sql = "INSERT INTO scheduler (name,command,CreationDate,period,NextExecution,active) values (?,?,?,?,?,?)";
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
