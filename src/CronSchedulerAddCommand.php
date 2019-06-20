@@ -23,18 +23,15 @@ use Symfony\Component\Yaml\Yaml;
 class CronSchedulerAddCommand extends Command
 {
     protected static $defaultName = "cron:scheduler:add";
-    /** @var $pdo */
-    private $pdo;
-    //private $em;
+    private $em;
 
     /** @var array $yamlFile*/
     private $commandsYaml;
 
-    public function __construct(/*EntityManagerInterface $em*/$name = null)
+    public function __construct(EntityManager $em,$name = null)
     {
-        $this->pdo = require __DIR__."/connection.php";
         parent::__construct($name);
-        //$this->em = $em;
+        $this->em = $em;
         $yamlFile = Yaml::parseFile(__DIR__."/commandes.yml");
         foreach($yamlFile as $key => $value)
             $this->commandsYaml[$key] = $value;
@@ -81,7 +78,7 @@ class CronSchedulerAddCommand extends Command
 
         $io->listing($listing);
 
-        $input = $io->ask("<default>Nom de la tâche à enregistrer</>",null,function($name){
+        $name = $io->ask("<default>Nom de la tâche à enregistrer</>",null,function($name){
 
             if(!key_exists($name,$this->commandsYaml))
                 throw new \RuntimeException("Saisie invalide");
@@ -102,30 +99,30 @@ class CronSchedulerAddCommand extends Command
             '',
             '*/x => Toutes les xème min/heures/jours...'
         ]);
-        $freq = $io->ask("<default>Période d'exécution</>",$this->commandsYaml[$input]['schedule'],function($command){
+        $perr = $io->ask("<default>Période d'exécution</>",$this->commandsYaml[$name]['schedule'],function($command){
 
             return (string)$command;
         });
-        $active = (isset($this->commandsYaml[$input]["disabled"]) && $this->commandsYaml[$input]["disabled"] == "true")?0:1;
-        $nextDate = ($active == 1)?CronExpression::factory($freq)->getNextRunDate()->format("Y-m-d H:i"):null;
+        $active = (isset($this->commandsYaml[$name]["disabled"]) && $this->commandsYaml[$name]["disabled"] == "true")?0:1;
+        $nextDate = ($active == 1)?CronExpression::factory($perr)->getNextRunDate():null;
 
         /** @var Scheduler $scheduler */
-        /*$scheduler = new Scheduler();
-        $scheduler->setName($input);
-        $scheduler->setCommand($this->commandsYaml[$input]["cmd"]);
-        $scheduler->setNextexecution(new \DateTime("now"));
+        $scheduler = new Scheduler();
+        $scheduler->setName($name);
+        $scheduler->setCommand($this->commandsYaml[$name]["cmd"]);
+        $scheduler->setCreationdate(new \DateTime("now"));
+        $scheduler->setNextexecution($nextDate);
+        $scheduler->setPeriod($perr);
         $scheduler->setActive($active);
         $this->em->persist($scheduler);
-        $this->em->flush();*/
-        $sql = "INSERT INTO scheduler (name,command,CreationDate,period,NextExecution,active) values (?,?,?,?,?,?)";
+        $this->em->flush();
+        /*$sql = "INSERT INTO scheduler (name,command,CreationDate,period,NextExecution,active) values (?,?,?,?,?,?)";
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $statement = $this->pdo->prepare($sql);
-        $statement->execute([$input,$this->commandsYaml[$input]["cmd"],date("Y-m-d H:i"),$freq,($nextDate),$active]);
-        if($this->pdo->errorCode() == "00000")
-        {
-            $io->writeln("<success>Ajout de la tâche <header>".$input ."</> avec succès !</>");
-        }
+        $statement->execute([$input,$this->commandsYaml[$input]["cmd"],date("Y-m-d H:i"),$freq,($nextDate),$active]);*/
+        $io->writeln("<success>Ajout de la tâche <header>".$input ."</> avec succès !</>");
+
 
     }
 

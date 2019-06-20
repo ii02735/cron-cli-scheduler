@@ -20,7 +20,7 @@ class CronSchedulerListCommand extends Command
     protected static $defaultName = "cron:scheduler:list";
     private $pdo;
     /** @var EntityManager $pdo */
-    //private $em;
+    private $em;
     protected function configure()
     {
         $this->setDescription("Liste les différentes tâches CRON")
@@ -31,9 +31,9 @@ class CronSchedulerListCommand extends Command
         $this->pdo = include __DIR__."/connection.php";
     }
 
-    public function __construct(/*EntityManagerInterface $em,*/$name = null)
+    public function __construct(EntityManager $em,$name = null)
     {
-        //$this->em = $em;
+        $this->em = $em;
         $this->pdo = require __DIR__."/connection.php";
         parent::__construct($name);
 

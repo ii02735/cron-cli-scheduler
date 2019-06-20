@@ -20,18 +20,18 @@ class CronSchedulerLoadCommand extends Command
     protected static $defaultName = "cron:scheduler:load";
     private $pdo;
     /** @var EntityManager $pdo */
-    //private $em;
+    private $em;
     protected function configure()
     {
         $this->setDescription("Charge des tâches CRON");
         $this->addArgument("file",InputArgument::REQUIRED,"Chemin du fichier .yml");
     }
 
-    public function __construct(/*EntityManagerInterface $em*/$name = null)
+    public function __construct(EntityManager $em,$name = null)
     {
         $this->pdo = require __DIR__."/connection.php";
         parent::__construct($name);
-        //$this->em = $em;
+        $this->em = $em;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

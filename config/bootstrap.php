@@ -11,16 +11,12 @@ $paths = [__DIR__."/../src/Entity"];
 
 $dbParams = [
     "driver" => "pdo_mysql",
-    "user" => "ada_fr",
-    "password" => "ada_db_pass",
+    "user" => "yadallee",
+    "password" => "bilaal",
     "host" => "localhost",
-    "dbname" => "ada_fr_db_2"
+    "dbname" => "test"
 ];
 
 $config = Setup::createAnnotationMetadataConfiguration($paths,true,null,null,false);
-/** @var EntityManagerInterface $entityManager */
-$entityManager = EntityManager::create($dbParams,$config);
-$platform = $entityManager->getConnection()->getDatabasePlatform();
-$platform->registerDoctrineTypeMapping('enum', 'string');
-$platform->registerDoctrineTypeMapping('bit', 'boolean');
+
 

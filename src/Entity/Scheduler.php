@@ -17,7 +17,6 @@ class Scheduler
      *
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
      */
     private $name;
 

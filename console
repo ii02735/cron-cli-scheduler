@@ -8,17 +8,17 @@ require __DIR__."/src/service/container.php";
 use CronScheduler\CronSchedulerAddCommand;
 use CronScheduler\CronSchedulerListCommand;
 use CronScheduler\CronSchedulerLoadCommand;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Application;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 
 $application = new Application();
 /** @var ContainerBuilder $container */
-/** @var EntityManagerInterface $em */
-//$em = $container->get("entity.manager");
+/** @var EntityManager $em */
+$em = $container->get("entity.manager");
 $application->addCommands([
-    new CronSchedulerLoadCommand(/*$em*/),
-    new CronSchedulerListCommand(/*$em*/),
-    new CronSchedulerAddCommand(/*$em*/)]);
+    new CronSchedulerLoadCommand($em),
+    new CronSchedulerListCommand($em),
+    new CronSchedulerAddCommand($em)]);
 $application->run();

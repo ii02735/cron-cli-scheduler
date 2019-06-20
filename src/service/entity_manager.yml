@@ -1,2 +1,8 @@
 services:
-  entity.manager
+  entity.manager:
+    class: Doctrine\ORM\EntityManager
+    factory:
+      - Doctrine\ORM\EntityManager
+      - create
+      arguments:
+        - "../../config/d
