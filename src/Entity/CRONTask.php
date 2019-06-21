@@ -2,13 +2,14 @@
 
 namespace CronScheduler\Entity;
 
+use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * Scheduler
  *
  * @ORM\Table(name="scheduler")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="CronScheduler\Repository\SchedulerRepository")
  */
 class Scheduler
 {
