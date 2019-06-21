@@ -1,34 +1,35 @@
 <?php
-
 use Cron\Cron;
 use Cron\CronExpression;
 use Cron\Executor\Executor;
 use Cron\Job\ShellJob;
 use Cron\Resolver\ArrayResolver;
 use Cron\Schedule\CrontabSchedule;
+use CronScheduler\Entity\CRONTask;
 
-require __DIR__."/vendor/autoload.php";
+require __DIR__."/config/bootstrap.php";
 
-/** @var PDO $pdo */
-$pdo = include __DIR__ . "/src/connection.php";
 $resolver = new ArrayResolver();
-foreach($pdo->query("SELECT * FROM scheduler") as $task){
-    if($task["active"] == 1){
+
+foreach($em->getRepository(CRONTask::class)->getTasks(true) as $task){
+
         $job = new ShellJob();
         $job->setCommand($task["command"]);
         $job->setSchedule(new CrontabSchedule($task["period"]));
         $resolver->addJob($job);
-
         /** @var CronExpression $cronExpression */
         $cronExpression = CronExpression::factory($task["period"]);
 
         if($cronExpression->isDue()){
-        $pdo->prepare("UPDATE scheduler set scheduler.LastExecution=? WHERE name=?")->execute([date("Y-m-d H:i"),$task["name"]]);
-        $pdo->prepare("UPDATE scheduler set scheduler.NextExecution=? WHERE name=?")->execute([$cronExpression->getNextRunDate()->format("Y-m-d H:i"),$task["name"]]);
+            /** @var CRONTask $taskModified */
+            $taskModified = $em->getRepository(CRONTask::class)->find($task["name"]);
+            $taskModified->setLastexecution(DateTime::createFromFormat("Y-m-d H:i",date("Y-m-d H:i")));
+            $taskModified->setNextexecution($cronExpression->getNextRunDate());
+            $em->merge($taskModified);
+            $em->flush();
         }
-    }
-}
 
+}
 $cron = new Cron();
 $cron->setExecutor(new Executor());
 $cron->setResolver($resolver);

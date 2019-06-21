@@ -6,7 +6,8 @@ namespace CronScheduler;
 
 use Cron\CronExpression;
 use Cron\Schedule\CrontabSchedule;
-use CronScheduler\Entity\Scheduler;
+use CronScheduler\Entity\CRONTask;
+use DateTime;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
@@ -23,6 +24,7 @@ use Symfony\Component\Yaml\Yaml;
 class CronSchedulerAddCommand extends Command
 {
     protected static $defaultName = "cron:scheduler:add";
+    /** @var EntityManager $em */
     private $em;
 
     /** @var array $yamlFile*/
@@ -32,7 +34,7 @@ class CronSchedulerAddCommand extends Command
     {
         parent::__construct($name);
         $this->em = $em;
-        $yamlFile = Yaml::parseFile(__DIR__."/commandes.yml");
+        $yamlFile = Yaml::parseFile(__DIR__ . "/commands.yml");
         foreach($yamlFile as $key => $value)
             $this->commandsYaml[$key] = $value;
 
@@ -99,20 +101,20 @@ class CronSchedulerAddCommand extends Command
             '',
             '*/x => Toutes les xème min/heures/jours...'
         ]);
-        $perr = $io->ask("<default>Période d'exécution</>",$this->commandsYaml[$name]['schedule'],function($command){
+        $period = $io->ask("<default>Période d'exécution</>",$this->commandsYaml[$name]['schedule'],function($command){
 
             return (string)$command;
         });
         $active = (isset($this->commandsYaml[$name]["disabled"]) && $this->commandsYaml[$name]["disabled"] == "true")?0:1;
-        $nextDate = ($active == 1)?CronExpression::factory($perr)->getNextRunDate():null;
+        $nextDate = ($active == 1)?CronExpression::factory($period)->getNextRunDate():null;
 
-        /** @var Scheduler $scheduler */
-        $scheduler = new Scheduler();
+        /** @var CRONTask $scheduler */
+        $scheduler = new CRONTask();
         $scheduler->setName($name);
         $scheduler->setCommand($this->commandsYaml[$name]["cmd"]);
-        $scheduler->setCreationdate(new \DateTime("now"));
+        $scheduler->setCreationdate(DateTime::createFromFormat("Y-m-d H:i",date("Y-m-d H:i")));
         $scheduler->setNextexecution($nextDate);
-        $scheduler->setPeriod($perr);
+        $scheduler->setPeriod($period);
         $scheduler->setActive($active);
         $this->em->persist($scheduler);
         $this->em->flush();
@@ -121,7 +123,7 @@ class CronSchedulerAddCommand extends Command
         $this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $statement = $this->pdo->prepare($sql);
         $statement->execute([$input,$this->commandsYaml[$input]["cmd"],date("Y-m-d H:i"),$freq,($nextDate),$active]);*/
-        $io->writeln("<success>Ajout de la tâche <header>".$input ."</> avec succès !</>");
+        $io->writeln("<success>Ajout de la tâche <header>".$name ."</> avec succès !</>");
 
 
     }

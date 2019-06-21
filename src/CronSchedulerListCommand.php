@@ -3,6 +3,7 @@
 namespace CronScheduler;
 
 use Cron\CronExpression;
+use CronScheduler\Entity\CRONTask;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use http\Exception\RuntimeException;
@@ -18,8 +19,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CronSchedulerListCommand extends Command
 {
     protected static $defaultName = "cron:scheduler:list";
-    private $pdo;
-    /** @var EntityManager $pdo */
+    /** @var EntityManager $em */
     private $em;
     protected function configure()
     {
@@ -28,13 +28,11 @@ class CronSchedulerListCommand extends Command
              ->addOption("del","d",InputOption::VALUE_REQUIRED,"Supprimer une tâche")
              ->addOption("toggle","t",InputOption::VALUE_REQUIRED,"Activer/désaciver une tâche")
              ->addOption("set","s",InputOption::VALUE_REQUIRED,"Modifier la période d'une tâche");
-        $this->pdo = include __DIR__."/connection.php";
     }
 
     public function __construct(EntityManager $em,$name = null)
     {
         $this->em = $em;
-        $this->pdo = require __DIR__."/connection.php";
         parent::__construct($name);
 
     }
@@ -42,26 +40,29 @@ class CronSchedulerListCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input,$output);
+        $schedulerManager = $this->em->getRepository(CRONTask::class);
         $tasks = [];
+        $tasks_temp = [];
+
         $statement = null;
         $io = $this->addStyle($io,$output,"header","yellow");
         $io = $this->addStyle($io,$output,"success","green","default",["bold"]);
         $io = $this->addStyle($io,$output,"success2","green");
         $io = $this->addStyle($io,$output,"danger","red");
-        if(!$input->getOption("filtre")){
-            $statement = $this->pdo->query("SELECT * FROM scheduler");
-            $statement->execute();
-        }else{
-            $statement = $this->pdo->prepare("SELECT * FROM scheduler WHERE active=?");
-            $statement->execute([$input->getOption("filtre")=="on"]);
-        }
 
-        if($array = $statement->fetchAll(\PDO::FETCH_ASSOC)){
-            foreach ($array as $row){
-                $attributes = [];
-                foreach ($row as $key => $value)
-                    $attributes[$key] = $value;
-                array_push($tasks,$attributes);
+        if(!$input->getOption("filtre"))
+            $tasks_temp = $schedulerManager->getTasks();
+        else
+            $tasks_temp = $schedulerManager
+                ->getTasks($input->getOption("filtre")=="on");
+
+        //die(var_dump($tasks_temp));
+
+        for($i = 0; $i<count($tasks_temp);$i++)
+        {
+            foreach ($tasks_temp[$i] as $key => $value)
+            {
+                $tasks[$i][$key] = ($value instanceof \DateTime ? $value->format("Y-m-d H:i:s") : $value);
             }
         }
 
@@ -80,14 +81,13 @@ class CronSchedulerListCommand extends Command
                 throw new \RuntimeException("La tâche ".$input->getOption("del")." n'existe pas");
 
             delete:
-            $statement = $this->pdo->prepare("DELETE FROM scheduler WHERE name=?");
-            $statement->execute([$input->getOption("del")]);
-            if($this->pdo->errorCode() == "00000")
-            {
-                $io->newLine();
-                $io->writeln("<success2>Suppression de la tâche <header>".$input->getOption("del")."</> avec succès !");
-                array_splice($tasks,$found,1);
-            }
+            $task = $schedulerManager->find($input->getOption("del"));
+            $this->em->remove($task);
+            $this->em->flush();
+            $io->newLine();
+            $io->writeln("<success2>Suppression de la tâche <header>".$input->getOption("del")."</> avec succès !");
+            array_splice($tasks,$found,1);
+
         }
 
         if($input->getOption("set"))
@@ -123,18 +123,18 @@ class CronSchedulerListCommand extends Command
                 return $period;
             });
 
-            $statement = $this->pdo->prepare("UPDATE scheduler SET NextExecution=? WHERE name=?");
-            $statement->execute([CronExpression::factory($newPeriod)->getNextRunDate()->format("Y-m-d H:i:s"),$input->getOption("set")]);
-            $statement = $this->pdo->prepare("UPDATE scheduler SET period=? WHERE name=?");
-            $statement->execute([CronExpression::factory($newPeriod),$input->getOption("set")]);
+            /** @var CRONTask $task */
+            $task = $schedulerManager->find($input->getOption("set"));
+            if($task->getActive())
+                $task->setNextexecution(CronExpression::factory($newPeriod)->getNextRunDate());
+            $task->setPeriod(CronExpression::factory($newPeriod));
+            $this->em->merge($task); //Parce que $task a déjà été instancié avant on utilise merge
+            $this->em->flush();
+            $io->newLine();
+            $io->writeln("<success2>Modification de la tâche <header>".$input->getOption("set")."</> avec succès !");
+            $tasks[$found]["period"] = $newPeriod;
+            $tasks[$found]["nextexecution"] = ($tasks[$found]["active"]?CronExpression::factory($newPeriod)->getNextRunDate()->format("Y-m-d H:i:s"):null);
 
-            if($this->pdo->errorCode() == "00000")
-            {
-                $io->newLine();
-                $io->writeln("<success2>Modification de la tâche <header>".$input->getOption("set")."</> avec succès !");
-                $tasks[$i]["period"] = $newPeriod;
-                $tasks[$i]["NextExecution"] = CronExpression::factory($newPeriod)->getNextRunDate()->format("Y-m-d H:i:s");
-            }
         }
 
         if($input->getOption("toggle"))
@@ -150,25 +150,24 @@ class CronSchedulerListCommand extends Command
             }
 
             toggle:
-            $tasks[$found]["active"] = ($tasks[$found]["active"]==1 ? 0 : 1);
-            $tasks[$found]["NextExecution"] = ($tasks[$found]["active"]==1 ? CronExpression::factory($tasks[$found]["period"])->getNextRunDate()->format("Y-m-d H:i:s"): null);
-            $statement = $this->pdo->prepare("UPDATE scheduler SET NextExecution=? WHERE name=?");
-            $statement->execute([($tasks[$found]["active"]==1?CronExpression::factory($tasks[$found]["period"])->getNextRunDate()->format("Y-m-d H:i:s"):null),$input->getOption("toggle")]);
-            $statement = $this->pdo->prepare("UPDATE scheduler SET active=? WHERE name=?");
-            $statement->execute([$tasks[$found]["active"],$input->getOption("toggle")]);
+            $tasks[$found]["active"] = ($tasks[$found]["active"] ? 0 : 1);
+            $tasks[$found]["nextexecution"] = ($tasks[$found]["active"] ? CronExpression::factory($tasks[$found]["period"])->getNextRunDate()->format("Y-m-d H:i:s"): null);
 
-            if($this->pdo->errorCode() == "00000")
-            {
-                $io->newLine();
-                $io->writeln("<success2>Tâche <header>".$input->getOption("toggle")."</> ".($tasks[$i]["active"]==1 ?"activée":"désactivée")." avec succès !");
-            }
+            $task = $schedulerManager->find($input->getOption("toggle"));
+            $task->setNextexecution(($tasks[$found]["active"]?CronExpression::factory($tasks[$found]["period"])->getNextRunDate():null))
+                 ->setActive($tasks[$found]["active"]);
+            $this->em->merge($task); //Parce que $task a déjà été instancié avant on utilise merge
+            $this->em->flush();
+            $io->newLine();
+            $io->writeln("<success2>Tâche <header>".$input->getOption("toggle")."</> ".($tasks[$i]["active"]==1 ?"activée":"désactivée")." avec succès !");
+
 
         }
 
         //Mise en forme des données pour l'affichage du tableau
         for ($i = 0; $i<count($tasks);$i++)
         {
-           $tasks[$i]["active"] = ($tasks[$i]["active"]==1)?"<success>Activé</>":"<danger>Désactivé</>";
+           $tasks[$i]["active"] = ($tasks[$i]["active"])?"<success>Activé</>":"<danger>Désactivé</>";
         }
         $io->title("Liste des tâches CRON");
         $io->table(
