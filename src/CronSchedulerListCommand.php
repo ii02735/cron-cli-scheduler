@@ -50,11 +50,11 @@ class CronSchedulerListCommand extends Command
         $io = $this->addStyle($io,$output,"success2","green");
         $io = $this->addStyle($io,$output,"danger","red");
 
-        if(!$input->getOption("filtre"))
+        if(!$input->getOption("filter"))
             $tasks_temp = $schedulerManager->getTasks();
         else
             $tasks_temp = $schedulerManager
-                ->getTasks($input->getOption("filtre")=="on");
+                ->getTasks($input->getOption("filter")=="on");
 
         //die(var_dump($tasks_temp));
 
