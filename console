@@ -2,8 +2,7 @@
 
 <?php
 
-require_once __DIR__."/vendor/autoload.php";
-require __DIR__."/src/service/container.php";
+require_once __DIR__."/config/bootstrap.php";
 
 use CronScheduler\CronSchedulerAddCommand;
 use CronScheduler\CronSchedulerListCommand;
@@ -15,8 +14,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 $application = new Application();
 /** @var ContainerBuilder $container */
-/** @var EntityManager $em */
-$em = $container->get("entity.manager");
 $application->addCommands([
     new CronSchedulerLoadCommand($em),
     new CronSchedulerListCommand($em),
