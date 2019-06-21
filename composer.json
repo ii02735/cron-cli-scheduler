@@ -2,7 +2,6 @@
     "name": "ii02735/cronScheduler",
     "description": "CronScheduler : permet de créer ses tâches CRON en PHP depuis un CLI",
     "keywords": ["cli","cron","schedule"],
-    "version": "1.0",
     "authors": [
         {
             "name": "ii02735",
