@@ -1,4 +1,4 @@
-##Planificateur de tâches CRON
+## Planificateur de tâches CRON
 
 Cette dépendance vous permet de définir vos tâches CRON depuis une interface de commande en PHP.
 
@@ -11,7 +11,7 @@ __Attention__ : Il vous est nécessaire de définir une tâche CRON qui s'exécu
 
 ##
 
-###Installation
+### Installation
 
 Ajouter la dépendance à votre projet :
 
@@ -19,7 +19,7 @@ Ajouter la dépendance à votre projet :
 composer require ii02735/cronScheduler
 ```
 
-####Configuration de la base de données
+#### Configuration de la base de données
 
 Renseigner les informations d'accès à la base de données dans le fichier __credentials.php__.
 
