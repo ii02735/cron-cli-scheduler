@@ -11,5 +11,8 @@
       <user-name>ada_fr</user-name>
       <introspection-schemas>*:@</introspection-schemas>
     </data-source>
+    <data-source name="test@localhost" uuid="179ebd5b-b31e-45bf-b6a8-4166175b9171">
+      <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MYSQL" exact-version="0" />
+    </data-source>
   </component>
 </project>
