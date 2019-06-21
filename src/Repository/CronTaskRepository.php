@@ -4,11 +4,11 @@
 namespace CronScheduler\Repository;
 
 
-use CronScheduler\Entity\Scheduler;
+use CronScheduler\Entity\CRONTask;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
-class SchedulerRepository extends EntityRepository
+class CronTaskRepository extends EntityRepository
 {
     /**
      * Get saved tasks
@@ -21,9 +21,9 @@ class SchedulerRepository extends EntityRepository
         $qb = $this->_em->createQueryBuilder();
         $result = null;
         if(is_null($active))
-            $result = $qb->select("s")->from(Scheduler::class,"s")->getQuery();
+            $result = $qb->select("s")->from(CRONTask::class,"s")->getQuery();
         else
-            $result = $qb->select("s")->from(Scheduler::class,"s")
+            $result = $qb->select("s")->from(CRONTask::class,"s")
                 ->where("s.active = :active")->setParameter(":active",$active)
                 ->getQuery();
 

@@ -6,12 +6,12 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Scheduler
+ * CRONTask
  *
- * @ORM\Table(name="scheduler")
- * @ORM\Entity(repositoryClass="CronScheduler\Repository\SchedulerRepository")
+ * @ORM\Table(name="cronTask")
+ * @ORM\Entity(repositoryClass="CronScheduler\Repository\CronTaskRepository")
  */
-class Scheduler
+class CRONTask
 {
     /**
      * @var string
@@ -92,7 +92,7 @@ class Scheduler
      *
      * @param string $command
      *
-     * @return Scheduler
+     * @return CRONTask
      */
     public function setCommand($command)
     {
@@ -116,7 +116,7 @@ class Scheduler
      *
      * @param \DateTime $creationdate
      *
-     * @return Scheduler
+     * @return CRONTask
      */
     public function setCreationdate($creationdate)
     {
@@ -140,7 +140,7 @@ class Scheduler
      *
      * @param string $period
      *
-     * @return Scheduler
+     * @return CRONTask
      */
     public function setPeriod($period)
     {
@@ -164,7 +164,7 @@ class Scheduler
      *
      * @param \DateTime $lastexecution
      *
-     * @return Scheduler
+     * @return CRONTask
      */
     public function setLastexecution($lastexecution)
     {
@@ -188,7 +188,7 @@ class Scheduler
      *
      * @param \DateTime $nextexecution
      *
-     * @return Scheduler
+     * @return CRONTask
      */
     public function setNextexecution($nextexecution)
     {
@@ -212,7 +212,7 @@ class Scheduler
      *
      * @param boolean $active
      *
-     * @return Scheduler
+     * @return CRONTask
      */
     public function setActive($active)
     {
