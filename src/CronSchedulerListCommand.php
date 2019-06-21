@@ -24,7 +24,7 @@ class CronSchedulerListCommand extends Command
     protected function configure()
     {
         $this->setDescription("Liste les différentes tâches CRON")
-             ->addOption("filtre","f",InputOption::VALUE_REQUIRED,"Trie les tâches selon leur état (on|off)")
+             ->addOption("filter","f",InputOption::VALUE_REQUIRED,"Trie les tâches selon leur état (on|off)")
              ->addOption("del","d",InputOption::VALUE_REQUIRED,"Supprimer une tâche")
              ->addOption("toggle","t",InputOption::VALUE_REQUIRED,"Activer/désactiver une tâche")
              ->addOption("set","s",InputOption::VALUE_REQUIRED,"Modifier la période d'une tâche");
