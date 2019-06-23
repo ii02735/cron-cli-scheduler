@@ -52,7 +52,7 @@ php ./vendor/ii02735/console cron:scheduler:load <chemin du fichier YAML>
 ```
 ## Thanks
 - [_NoUseFreak_ et ses collaborateurs](https://github.com/Cron/Cron) for their PHP implementation for CRON jobs
-- [_dragonmantank_](https://github.com/dragonmantank/cron-expression) pour his CRON expression parser
+- [_dragonmantank_](https://github.com/dragonmantank/cron-expression) for his CRON expression parser
 ##
 
 ## Planificateur de tâches CRON
