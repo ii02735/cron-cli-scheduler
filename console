@@ -2,20 +2,20 @@
 
 <?php
 
-require_once __DIR__."/config/bootstrap.php";
 
 use CronScheduler\CronSchedulerAddCommand;
 use CronScheduler\CronSchedulerListCommand;
 use CronScheduler\CronSchedulerLoadCommand;
+use CronScheduler\XMLReader;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Application;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+require_once __DIR__."/config/bootstrap.php";
 
 $application = new Application();
-/** @var ContainerBuilder $container */
+$xmlReader = new XMLReader($lang);
 $application->addCommands([
-    new CronSchedulerLoadCommand($em),
-    new CronSchedulerListCommand($em),
-    new CronSchedulerAddCommand($em)]);
+    new CronSchedulerLoadCommand($xmlReader,$em),
+    new CronSchedulerListCommand($xmlReader,$em),
+    new CronSchedulerAddCommand($xmlReader,$em,$baseFile)]);
 $application->run();

@@ -5,17 +5,12 @@ namespace CronScheduler;
 
 
 use Cron\CronExpression;
-use Cron\Schedule\CrontabSchedule;
 use CronScheduler\Entity\CRONTask;
 use DateTime;
 use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\Entity;
-use http\Exception\RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Helper\FormatterHelper;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -24,37 +19,41 @@ use Symfony\Component\Yaml\Yaml;
 class CronSchedulerAddCommand extends Command
 {
     protected static $defaultName = "cron:scheduler:add";
+
+    /** @var XMLReader $reader */
+    private $reader;
     /** @var EntityManager $em */
     private $em;
 
     /** @var array $yamlFile*/
     private $commandsYaml;
 
-    public function __construct(EntityManager $em,$name = null)
+    public function __construct($XMLReader,EntityManager $em,$basePath,$name = null)
     {
-        parent::__construct($name);
+
+        $this->reader = $XMLReader;
         $this->em = $em;
-        $yamlFile = Yaml::parseFile(__DIR__ . "/commands.yml");
+        $yamlFile = Yaml::parseFile($basePath);
         foreach($yamlFile as $key => $value)
             $this->commandsYaml[$key] = $value;
-
+        parent::__construct($name);
     }
 
     protected function configure()
     {
-        $this->setDescription("Ajoute une tâche CRON");
+        $this->setDescription($this->reader->out("addCommand","configure"));
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input,$output);
-        $io->newLine(2);
+        $io->newLine(1);
         $infoBlock = new OutputFormatterStyle("white","blue");
         $output->getFormatter()->setStyle("info",$infoBlock);
         /** @var FormatterHelper $formatter */
         $formatter = $this->getHelper("formatter");
 
-        $message = "Création d'une tâche CRON";
+        $message = $this->reader->out("addCommand","message");
         $message = $formatter->formatBlock($message,'info',true);
 
         $output->writeln($message);
@@ -69,8 +68,8 @@ class CronSchedulerAddCommand extends Command
 
         $success = new OutputFormatterStyle("green","default");
         $output->getFormatter()->setStyle("success",$success);
-
-        $io->writeln("Commandes disponibles");
+        $message = $this->reader->out("addCommand","listCommands");
+        $io->writeln($message);
         $io->newLine();
 
         $listing = [];
@@ -80,28 +79,16 @@ class CronSchedulerAddCommand extends Command
 
         $io->listing($listing);
 
-        $name = $io->ask("<default>Nom de la tâche à enregistrer</>",null,function($name){
+        $name = $io->ask("<default>".$this->reader->out("addCommand","inputCRON")."</>",null,function($name){
 
             if(!key_exists($name,$this->commandsYaml))
-                throw new \RuntimeException("Saisie invalide");
+                throw new \RuntimeException($this->reader->out("addCommand","inputException"));
             return $name;
         });
 
-        $io->title("Format de planification" );
-        $io->text([
-            '*    *    *    *    *    *',
-            '-    -    -    -    -    -',
-            '|    |    |    |    |    |',
-            '|    |    |    |    |    + année [facultatif]',
-            '|    |    |    |    +----- jour de la semaine (0 - 7) (Dimanche=0 ou 7)',
-            '|    |    |    +---------- mois (1 - 12)',
-            '|    |    +--------------- jour du mois (1 - 31)',
-            '|    +-------------------- heure (0 - 23)',
-            '+------------------------- min (0 - 59)',
-            '',
-            '*/x => Toutes les xème min/heures/jours...'
-        ]);
-        $period = $io->ask("<default>Période d'exécution</>",$this->commandsYaml[$name]['schedule'],function($command){
+        $io->title($this->reader->out("addCommand","CRONPattern"));
+        $io->text($this->reader->out("addCommand","schemaCRON"));
+        $period = $io->ask("<default>".$this->reader->out("addCommand","executionPeriod")."</>",$this->commandsYaml[$name]['schedule'],function($command){
 
             return (string)$command;
         });
@@ -123,7 +110,7 @@ class CronSchedulerAddCommand extends Command
         $this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
         $statement = $this->pdo->prepare($sql);
         $statement->execute([$input,$this->commandsYaml[$input]["cmd"],date("Y-m-d H:i"),$freq,($nextDate),$active]);*/
-        $io->writeln("<success>Ajout de la tâche <header>".$name ."</> avec succès !</>");
+        $io->writeln("<success>".$this->reader->out("addCommand","successAdd")."</><header> ".$name."</>");
 
 
     }

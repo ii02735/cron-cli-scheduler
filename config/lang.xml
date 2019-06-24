@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CLI>
+    <addCommand>
+        <configure value="en">Add a CRON job</configure>
+        <message value="en">CRON job creation</message>
+        <listCommands value="en">Available commands</listCommands>
+        <inputCRON value="en">Task name to register</inputCRON>
+        <inputException value="en">Invalid input</inputException>
+        <CRONPattern value="en">Scheduling format / CRON pattern</CRONPattern>
+        <schemaCRON value="en">
+    '*    *    *    *    *    *',
+    '-    -    -    -    -    -',
+    '|    |    |    |    |    |',
+    '|    |    |    |    |    + year [optional]',
+    '|    |    |    |    +----- day of week (0 - 7) (Sunday=0 or 7)',
+    '|    |    |    +---------- month (1 - 12)',
+    '|    |    +--------------- day of month (1 - 31)',
+    '|    +-------------------- hour (0 - 23)',
+    '+------------------------- min (0 - 59)',
+    '',
+    '*/x => Every x min/hours/days...'
+        </schemaCRON>
+        <executionPeriod value="en">Execution period</executionPeriod>
+        <successAdd value="en">CRON Job successfully added for the command named</successAdd>
+        <configure value="fr">Ajout d'une tâche CRON</configure>
+        <message value="fr">Création d'une tâche CRON</message>
+        <listCommands value="fr">Commandes disponibles</listCommands>
+        <inputCRON value="fr">Nom de la tâche à ajouter</inputCRON>
+        <inputException value="fr">Saisie Invalide</inputException>
+        <CRONPattern value="fr">Format de planification / Pattern CRON</CRONPattern>
+        <schemaCRON value="fr">
+    '*    *    *    *    *    *',
+    '-    -    -    -    -    -',
+    '|    |    |    |    |    |',
+    '|    |    |    |    |    + année [facultatif]',
+    '|    |    |    |    +----- jour de la semaine (0 - 7) (Dimanche=0 ou 7)',
+    '|    |    |    +---------- mois (1 - 12)',
+    '|    |    +--------------- jour du mois (1 - 31)',
+    '|    +-------------------- heure (0 - 23)',
+    '+------------------------- min (0 - 59)',
+    '',
+    '*/x => Toutes les xème min/heures/jours...'
+        </schemaCRON>
+        <executionPeriod value="fr">Période d'exécution</executionPeriod>
+        <successAdd value="fr">Tâche CRON ajoutée avec succès pour la commande</successAdd>
+    </addCommand>
+    <listCommand>
+        <configure value="en">Display created CRON jobs</configure>
+        <option1 value="en">Sort jobs by their status (on|off)</option1>
+        <option2 value="en">Delete a job</option2>
+        <option3 value="en">Enable/disable a job</option3>
+        <option4 value="en">Set a job's execution period</option4>
+        <existenceException value="en">No such job for</existenceException>
+        <deletionSuccess value="en">Deletion successful for </deletionSuccess>
+        <setPeriod value="en">Set the new execution period for</setPeriod>
+        <setPeriodSuccess value="en">Execution period modified successfully for</setPeriodSuccess>
+        <enabled value="en">Enabled</enabled>
+        <disabled value="en">Disabled</disabled>
+        <displayJobs value="en">Cron Jobs list</displayJobs>
+        <name value="en">Name</name>
+        <command value="en">Command</command>
+        <creationDate value="en">Creation date</creationDate>
+        <period value="en">Period</period>
+        <lastExec value="en">Last execution</lastExec>
+        <nextExec value="en">Next execution</nextExec>
+        <status value="en">Status</status>
+
+        <configure value="fr">Affiche les tâches CRON créées</configure>
+        <option1 value="fr">Trie les tâches par leur état (on|off)</option1>
+        <option2 value="fr">Efface une tâche</option2>
+        <option3 value="fr">Active/désactive une tâche</option3>
+        <option4 value="fr">Modifie la période d'exécution d'une tâche</option4>
+        <existenceException value="fr">Aucune tâche nommée</existenceException>
+        <deletionSuccess value="en">Suppression effectuée avec succès pour </deletionSuccess>
+        <setPeriod value="fr">Choisir la nouvelle période d'exécution pour</setPeriod>
+        <setPeriodSuccess value="fr">Période d'exécution modifiée avec succès pour</setPeriodSuccess>
+        <enabled value="fr">Activé</enabled>
+        <disabled value="fr">Désactivé</disabled>
+        <name value="fr">Nom</name>
+        <displayJobs value="en">Liste des tâches CRON</displayJobs>
+        <command value="fr">Commande</command>
+        <creationDate value="fr">Date de création</creationDate>
+        <period value="fr">Période</period>
+        <lastExec value="fr">Dernière exécution</lastExec>
+        <nextExec value="fr">Prochaine exécution</nextExec>
+        <status value="fr">État</status>
+    </listCommand>
+
+    <loadCommand>
+        <configure value="en">Set a YAML file that contains bash commands</configure>
+        <argument value="en">YAML file path</argument>
+        <option value="en">Load and set each command as a CRON job</option>
+        <importTaskSuccess value="en">Import as CRON Job successfully done for</importTaskSuccess>
+        <importTaskFail value="en">An error has occurred during the import of the following command</importTaskFail>
+        <configure value="fr">Choisit un fichier YAML qui contient des commandes BASH</configure>
+        <argument value="fr">Chemin du fichier YAML</argument>
+        <option value="en">Charge et enregistre chaque commande en tâche CRON</option>
+        <importTaskSuccess value="en">Importation en tâche CRON effectuée pour</importTaskSuccess>
+        <importTaskFail value="en">Une erreur est survenue durant l'importation de la commande</importTaskFail>
+    </loadCommand>
+</CLI>

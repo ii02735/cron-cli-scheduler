@@ -22,53 +22,58 @@ class CronSchedulerLoadCommand extends Command
     protected static $defaultName = "cron:scheduler:load";
     /** @var EntityManager $em */
     private $em;
+    /** @var XMLReader */
+    private $reader;
+
     protected function configure()
     {
-        $this->setDescription("Charge des tâches CRON");
-        $this->addArgument("file",InputArgument::REQUIRED,"Chemin du fichier .yml");
+        $this->setDescription($this->reader->out("loadCommand","configure"));
+        $this->addArgument("file",InputArgument::REQUIRED,$this->reader->out("loadCommand","argument"));
     }
 
-    public function __construct(EntityManager $em,$name = null)
+    public function __construct($reader,EntityManager $em,$name = null)
     {
-        parent::__construct($name);
         $this->em = $em;
+        $this->reader = $reader;
+        parent::__construct($name);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $file = Yaml::parseFile($input->getArgument("file"));
-        $schedulerManager = $this->em->getRepository(CRONTask::class);
-        foreach($file as $name => $task)
-        {
-            $task = new CRONTask();
-            $task->setName($name);
-            $task->setCommand($task["cmd"]);
-            $task->setCreationdate(DateTime::createFromFormat("Y-m-d H:i",date("Y-m-d H:i")));
-            $task->setPeriod(CronExpression::factory($task["schedule"]));
+            $file = Yaml::parseFile($input->getArgument("file"));
 
-            if(isset($task["disabled"]) && $task["disabled"])
-                $task->setActive(false);
-            else
-                $task->setNextexecution(CronExpression::factory($task["schedule"])->getNextRunDate());
-
-
-            $output = new SymfonyStyle($input,$output);
-            $output->getFormatter()->setStyle("important",new OutputFormatterStyle("yellow","default"));
-            try {
-                $this->em->persist($task);
-                $this->em->flush();
-                $output->writeln("<info>Tâche <important>$name</> importée avec succès !</info>");
-
-            }
-            catch(\Exception $e)
+            foreach($file as $name => $task)
             {
-                $output->writeln("<error>Une erreur est survenue durant l'importation de la commande $name</>");
-                echo $e->getMessage()."\n";
+                $taskPersist = new CRONTask();
+                $taskPersist->setName($name);
+                $taskPersist->setCommand($task["cmd"]);
+                $taskPersist->setCreationdate(DateTime::createFromFormat("Y-m-d H:i",date("Y-m-d H:i")));
+                $taskPersist->setPeriod(CronExpression::factory($task["schedule"]));
+
+                if(isset($task["disabled"]) && $task["disabled"])
+                    $taskPersist->setActive(false);
+                else
+                    $taskPersist->setNextexecution(CronExpression::factory($task["schedule"])->getNextRunDate());
+
+
+                $output = new SymfonyStyle($input,$output);
+                $output->getFormatter()->setStyle("important",new OutputFormatterStyle("yellow","default"));
+                try {
+                    $this->em->persist($taskPersist);
+                    $this->em->flush();
+                    $output->writeln("<info>".$this->reader->out("loadCommand","importTaskSuccess")."</> <important>$name</important>");
+
+                }
+                catch(\Exception $e)
+                {
+                    $output->writeln("<error>".$this->reader->out("loadCommand","importTaskFail")."</>");
+                    echo $e->getMessage()."\n";
+                    die();
+                }
+
+
+
             }
-
-
-
-        }
 
         $output->newLine();
 

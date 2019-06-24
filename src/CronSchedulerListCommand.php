@@ -21,17 +21,20 @@ class CronSchedulerListCommand extends Command
     protected static $defaultName = "cron:scheduler:list";
     /** @var EntityManager $em */
     private $em;
+    /** @var XMLReader $reader */
+    private $reader;
     protected function configure()
     {
-        $this->setDescription("Liste les différentes tâches CRON")
-             ->addOption("filter","f",InputOption::VALUE_REQUIRED,"Trie les tâches selon leur état (on|off)")
-             ->addOption("del","d",InputOption::VALUE_REQUIRED,"Supprimer une tâche")
-             ->addOption("toggle","t",InputOption::VALUE_REQUIRED,"Activer/désactiver une tâche")
-             ->addOption("set","s",InputOption::VALUE_REQUIRED,"Modifier la période d'une tâche");
+        $this->setDescription($this->reader->out("listCommand","configure"))
+             ->addOption("filter","f",InputOption::VALUE_REQUIRED,$this->reader->out("listCommand","option1"))
+             ->addOption("del","d",InputOption::VALUE_REQUIRED,$this->reader->out("listCommand","option2"))
+             ->addOption("toggle","t",InputOption::VALUE_REQUIRED,$this->reader->out("listCommand","option3"))
+             ->addOption("set","s",InputOption::VALUE_REQUIRED,$this->reader->out("listCommand","option4"));
     }
 
-    public function __construct(EntityManager $em,$name = null)
+    public function __construct($reader,EntityManager $em,$name = null)
     {
+        $this->reader = $reader;
         $this->em = $em;
         parent::__construct($name);
 
@@ -78,14 +81,14 @@ class CronSchedulerListCommand extends Command
                     goto delete;
             }
 
-                throw new \RuntimeException("La tâche ".$input->getOption("del")." n'existe pas");
+                throw new \RuntimeException($this->reader->out("listCommand","existenceException"));
 
             delete:
             $task = $schedulerManager->find($input->getOption("del"));
             $this->em->remove($task);
             $this->em->flush();
             $io->newLine();
-            $io->writeln("<success2>Suppression de la tâche <header>".$input->getOption("del")."</> avec succès !");
+            $io->writeln("<success2>".$this->reader->out("listCommand","deletionSuccess")."</>  <header>".$input->getOption("del")."</> !");
             array_splice($tasks,$found,1);
 
         }
@@ -102,24 +105,12 @@ class CronSchedulerListCommand extends Command
                     goto changePeriod;
             }
 
-            throw new \RuntimeException("La tâche ".$input->getOption("set")." n'existe pas");
+            throw new \RuntimeException($this->reader->out("listCommand","existenceException")." ".$input->getOption("set"));
 
             changePeriod:
-            $io->title("Format de planification" );
-            $io->text([
-                '*    *    *    *    *    *',
-                '-    -    -    -    -    -',
-                '|    |    |    |    |    |',
-                '|    |    |    |    |    + année [facultatif]',
-                '|    |    |    |    +----- jour de la semaine (0 - 7) (Dimanche=0 ou 7)',
-                '|    |    |    +---------- mois (1 - 12)',
-                '|    |    +--------------- jour du mois (1 - 31)',
-                '|    +-------------------- heure (0 - 23)',
-                '+------------------------- min (0 - 59)',
-                '',
-                '*/x => Toutes les xème min/heures/jours...'
-            ]);
-            $newPeriod = $io->ask("Entrer la nouvelle période de la tâche <header>".$input->getOption("set")."</>",null,function($period){
+            $io->title($this->reader->out("addCommand","CRONPattern"));
+            $io->text($this->reader->out("addCommand","schemaCRON"));
+            $newPeriod = $io->ask($this->reader->out("listCommand","setPeriod")." <header>".$input->getOption("set")."</>",null,function($period){
                 return $period;
             });
 
@@ -131,7 +122,7 @@ class CronSchedulerListCommand extends Command
             $this->em->merge($task); //Parce que $task a déjà été instancié avant on utilise merge
             $this->em->flush();
             $io->newLine();
-            $io->writeln("<success2>Modification de la tâche <header>".$input->getOption("set")."</> avec succès !");
+            $io->writeln("<success2>".$this->reader->out("listCommand","setPeriodSuccess")."</> <header>".$input->getOption("set")."</>");
             $tasks[$found]["period"] = $newPeriod;
             $tasks[$found]["nextexecution"] = ($tasks[$found]["active"]?CronExpression::factory($newPeriod)->getNextRunDate()->format("Y-m-d H:i:s"):null);
 
@@ -159,7 +150,7 @@ class CronSchedulerListCommand extends Command
             $this->em->merge($task); //Parce que $task a déjà été instancié avant on utilise merge
             $this->em->flush();
             $io->newLine();
-            $io->writeln("<success2>Tâche <header>".$input->getOption("toggle")."</> ".($tasks[$i]["active"]==1 ?"activée":"désactivée")." avec succès !");
+            $io->writeln("<header>".$input->getOption("toggle")."</>"." <success2>".($tasks[$found]["active"]?strtolower($this->reader->out("listCommand","enabled"))." ! </>":strtolower($this->reader->out("listCommand","disabled"))." ! </>"));
 
 
         }
@@ -167,11 +158,13 @@ class CronSchedulerListCommand extends Command
         //Mise en forme des données pour l'affichage du tableau
         for ($i = 0; $i<count($tasks);$i++)
         {
-           $tasks[$i]["active"] = ($tasks[$i]["active"])?"<success>Activé</>":"<danger>Désactivé</>";
+           $tasks[$i]["active"] = ($tasks[$i]["active"])?"<success>".$this->reader->out("listCommand","enabled")."</>":"<danger>".$this->reader->out("listCommand","disabled")."</>";
         }
-        $io->title("Liste des tâches CRON");
+        $io->title($this->reader->out("listCommand","displayJobs"));
         $io->table(
-            ["<header>Nom</>","<header>Commande</>","<header>Date de création</>","<header>Période</>","<header>Dernière exécution</header>","<header>Prochaine exécution</header>","<header>état</>"],
+            ["<header>".$this->reader->out("listCommand","name")."</>","<header>".$this->reader->out("listCommand","command")."</>","<header>".$this->reader->out("listCommand","creationDate")."</>",
+                "<header>".$this->reader->out("listCommand","period")."</>","<header>".$this->reader->out("listCommand","lastExec")."</header>",
+                "<header>".$this->reader->out("listCommand","nextExec")."</header>","<header>".$this->reader->out("listCommand","status")."</>"],
             $tasks
 
         );

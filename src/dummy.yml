@@ -1,0 +1,3 @@
+commandDummy1:
+  cmd:  "echo 'hello world' >> fichierDummy.txt"
+  schedule: "* * * * *"
