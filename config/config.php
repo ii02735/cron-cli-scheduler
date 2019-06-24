@@ -22,11 +22,11 @@ $useSimpleannotationReader = false;
 //provide configuration for database access
 
 $doctrine_parameters = [
-  "driver"=> "pdo_mysql", #database_driver
-  "host" => "localhost", #database_server_host
-  "dbname" => "ada_fr_db_2", #database_name
-  "user" => "ada_fr", #database_username
-  "password" => "ada_db_pass", #database_user_password
+  "driver"=> "", #database_driver
+  "host" => "", #database_server_host
+  "dbname" => "", #database_name
+  "user" => "", #database_username
+  "password" => "", #database_user_password
 ];
 
 //Provide base path where your yml is located (inside you should have written your commands that you want to add as cron jobs)
@@ -38,4 +38,4 @@ $basePath = null;
 $lang = "en";
 
 //File that must be loaded for user's choices (cron:scheduler:add)
-$baseFile = __DIR__."/../src/dummy.yml";
+$baseFile = __DIR__."/../src/commands.yml";
