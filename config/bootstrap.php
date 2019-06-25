@@ -3,7 +3,7 @@
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 
-require_once __DIR__."/../vendor/autoload.php";
+require_once __DIR__."/../../../autoload.php";
 require_once __DIR__."/config.php";
 if(!is_null($entityManagerInstance) && is_file($entityManagerInstance))
 {
