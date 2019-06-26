@@ -52,7 +52,7 @@ php ./vendor/ii02735/console cron:scheduler:list
     - __-t__, __--toggle=TOGGLE__   Enable/disable a task
 - Load a YAML file as tasks to be loaded :
 ```yaml
-php ./vendor/ii02735/console cron:scheduler:load <chemin du fichier YAML>
+php ./vendor/ii02735/console cron:scheduler:load <YAML file path>
 ```
 ## Thanks
 - [_NoUseFreak_ et ses collaborateurs](https://github.com/Cron/Cron) for their PHP implementation for CRON jobs
