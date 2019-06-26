@@ -19,7 +19,11 @@ composer require ii02735/cron-scheduler
 
 #### Database configuration
 
-Fill database credentials in __credentials.php__.
+Fill database credentials in __config.php__ if you want to create an EntityManager instance.
+Else you can load in __$entityManagerInstance__ your instance by complete its value with a PHP file path
+
+Don't forget to also add paths where your Entites are stored in __$entities_paths__ if you intend to create en EntityManager.
+
 
 ### Usage
 
@@ -78,7 +82,10 @@ composer require ii02735/cron-scheduler
 
 #### Configuration de la base de données
 
-Renseigner les informations d'accès à la base de données dans le fichier __credentials.php__.
+Renseigner les informations d'accès dans __config.php__ si vous souhaitez créer une instance d'EntityManager
+Sinon vous pouvez en charger une depuis __$entityManagerInstance__ en renseignant le chemin du fichier PHP qui construit l'instance.
+
+N'oubliez pas de renseigner vos chemins où sont stockés les Entités dans __$entities_paths__ si vous souhaitez créer votre instance d'EntityManager
 
 ### Utilisation
 
