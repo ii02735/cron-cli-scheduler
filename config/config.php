@@ -46,4 +46,4 @@ $basePath = null;
 $lang = $_ENV["CRON_SCHEDULER_LANG"];
 
 //File that must be loaded for user's choices (cron:scheduler:add)
-$baseFile = $_ENV["CRON_BASE_FILE"];
+$baseFile = __DIR__."/../../../../".$_ENV["CRON_BASE_FILE"];
