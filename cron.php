@@ -1,25 +1,17 @@
 <?php
-use Cron\Cron;
 use Cron\CronExpression;
-use Cron\Executor\Executor;
-use Cron\Job\ShellJob;
-use Cron\Resolver\ArrayResolver;
-use Cron\Schedule\CrontabSchedule;
 use CronScheduler\Entity\CRONTask;
+use GO\Scheduler;
 
 require __DIR__."/config/bootstrap.php";
 
-$resolver = new ArrayResolver();
+$scheduler = new Scheduler();
 
 foreach($em->getRepository(CRONTask::class)->getTasks(true) as $task){
 
-        $job = new ShellJob();
-        $job->setCommand($task["command"]);
-        $job->setSchedule(new CrontabSchedule($task["period"]));
-        $resolver->addJob($job);
+        $job = $scheduler->raw($task["command"])->at($task["period"]);
         /** @var CronExpression $cronExpression */
         $cronExpression = CronExpression::factory($task["period"]);
-
         if($cronExpression->isDue()){
             /** @var CRONTask $taskModified */
             $taskModified = $em->getRepository(CRONTask::class)->find($task["name"]);
@@ -30,7 +22,5 @@ foreach($em->getRepository(CRONTask::class)->getTasks(true) as $task){
         }
 
 }
-$cron = new Cron();
-$cron->setExecutor(new Executor());
-$cron->setResolver($resolver);
-$cron->run();
+
+$scheduler->run();
