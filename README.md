@@ -63,7 +63,7 @@ php ./vendor/ii02735/console cron:scheduler:load <YAML file path>
 ```
 ## Thanks
 - [_NoUseFreak_ and his collaborators](https://github.com/Cron/Cron) for their PHP implementation for CRON jobs
-- [_peppeocchi_ et ses collaborateurs](https://github.com/peppeocchi/php-cron-scheduler) for their advanced implementation for CRON jobs
+- [_peppeocchi_ and his collaborateurs](https://github.com/peppeocchi/php-cron-scheduler) for their advanced implementation for CRON jobs
 - [_dragonmantank_](https://github.com/dragonmantank/cron-expression) for his CRON expression parser
 ##
 
