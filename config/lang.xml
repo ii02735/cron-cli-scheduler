@@ -51,7 +51,7 @@
         <option3 value="en">Enable/disable a job</option3>
         <option4 value="en">Set a job's execution period</option4>
         <existenceException value="en">No such job for</existenceException>
-        <deletionSuccess value="en">Deletion successful for </deletionSuccess>
+        <deletionSuccess value="en">Deletion successful for</deletionSuccess>
         <setPeriod value="en">Set the new execution period for</setPeriod>
         <setPeriodSuccess value="en">Execution period modified successfully for</setPeriodSuccess>
         <enabled value="en">Enabled</enabled>
@@ -71,7 +71,7 @@
         <option3 value="fr">Active/désactive une tâche</option3>
         <option4 value="fr">Modifie la période d'exécution d'une tâche</option4>
         <existenceException value="fr">Aucune tâche nommée</existenceException>
-        <deletionSuccess value="en">Suppression effectuée avec succès pour </deletionSuccess>
+        <deletionSuccess value="en">Suppression effectuée avec succès pour</deletionSuccess>
         <setPeriod value="fr">Choisir la nouvelle période d'exécution pour</setPeriod>
         <setPeriodSuccess value="fr">Période d'exécution modifiée avec succès pour</setPeriodSuccess>
         <enabled value="fr">Activé</enabled>
