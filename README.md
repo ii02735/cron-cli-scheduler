@@ -5,7 +5,7 @@ That dependency allows you to define your cron tasks for bash instructions from 
 __Warning__ : you must create a cron task that will run every minutes from Linux crontab
 
 ```
-* * * * * php <chemin de votre projet PHP>/vendor/ii02735/cron.php
+* * * * * php <PHP project path>/vendor/ii02735/cron.php
 ```
 
 ##
