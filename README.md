@@ -17,13 +17,20 @@ Add the depedency to your project :
 composer require ii02735/cron-scheduler
 ```
 
-#### Database configuration
+#### Configuration
 
-Fill database credentials in __config.php__ if you want to create an EntityManager instance.
-Else you can load in __$entityManagerInstance__ your instance by complete its value with a PHP file path
+You must provide an __environment .env file outside your project folder__ with the following environment variables in order to fill database's crendentials for Doctrine :
 
-Don't forget to also add paths where your Entites are stored in __$entities_paths__ if you intend to create en EntityManager.
+- __DB_DRIVER__ with your Database driver
+- __DB_HOST__ with your database's DSN
+- __DB_USER__ with the database's user
+- __DB_PASSWORD__ with the user's password
 
+#### Important
+
+- Don't forget to also add __the Entity's path__ in your Doctrine configuration in order to update your Database after with Doctrine's CLI.
+- Don't also forget to provide your YAML file with your bash commands in __CRON_BASE_FILE__ variable (refer to syntax below).
+- You can specify the language interface in the __CRON_SCHEDULER_LANG__ variable ("en" for English by default, "fr" for French).
 
 ### Usage
 
@@ -33,7 +40,7 @@ Three commands are available :
 ```
 php ./vendor/ii02735/console cron:scheduler:add
 ```
-It will look the list of bash commands in ``config/commands.yml``
+It will look the list of bash commands in the file that you provided its path in __CRON_BASE_FILE__ variable.
 If you want to add more, please respect the syntax below : 
 ```yaml
 <task identifier>: ...
@@ -80,12 +87,19 @@ Ajouter la dépendance à votre projet :
 composer require ii02735/cron-scheduler
 ```
 
-#### Configuration de la base de données
+#### Configuration
 
-Renseigner les informations d'accès dans __config.php__ si vous souhaitez créer une instance d'EntityManager
-Sinon vous pouvez en charger une depuis __$entityManagerInstance__ en renseignant le chemin du fichier PHP qui construit l'instance.
+Vous devez fournir __un fichier d'environnement .env à l'extérieur de votre dossier de projet__ avec les variables d'environnement suivantes afin de donner accès à Doctrine à votre base de données :
 
-N'oubliez pas de renseigner vos chemins où sont stockés les Entités dans __$entities_paths__ si vous souhaitez créer votre instance d'EntityManager
+- __DB_DRIVER__ avec le driver de votre base de données
+- __DB_HOST__ avec le DSN de votre base de données
+- __DB_USER__ avec l'utilisateur de la base de données
+- __DB_PASSWORD__ avec le mot de passe de ce dernier
+
+#### Important
+- N'oubliez pas de préciser __le chemin de l'entité__ dans votre configuration de Doctrine afin de mettre à jour votre base de données avec le CLI de Doctrine
+- N'oubliez pas de préciser le chemin du fichier YAML avec vos commandes bash dans la variable __CRON_BASE_FILE__ (vérifier la syntaxe ci-dessous) 
+- Vous pouvez préciser la langue de l'interface dans la variable __CRON_SCHEDULER_LANG__ ("en" pour l'anglais par défaut, "fr" pour le français).
 
 ### Utilisation
 
@@ -95,7 +109,7 @@ Trois commandes sont disponibles pour l'utilisation de la dépendance :
 ```
 php ./vendor/ii02735/console cron:scheduler:add
 ```
-La commande ira piocher la liste des instructions bash dans le fichier ``config/commands.yml``
+La commande ira piocher la liste des instructions bash dans le fichier que vous avez précisé dans __CRON_BASE_FILE__
 Si vous souhaitez rajouter des instructions, veuillez respecter la syntaxe du fichier yml :
 ```yaml
 <id de la tâche>: ...
