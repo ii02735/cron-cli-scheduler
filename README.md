@@ -21,7 +21,8 @@ composer require ii02735/cron-scheduler
 
 You must provide an __environment .env file outside your project folder__ with the following environment variables in order to fill database's crendentials for Doctrine :
 
-- __DB_DRIVER__ with your Database driver
+- __DB_DRIVER__ with your database driver
+- __DB_NAME__ with your database's name
 - __DB_HOST__ with your database's DSN
 - __DB_USER__ with the database's user
 - __DB_PASSWORD__ with the user's password
@@ -93,6 +94,7 @@ composer require ii02735/cron-scheduler
 Vous devez fournir __un fichier d'environnement .env à l'extérieur de votre dossier de projet__ avec les variables d'environnement suivantes afin de donner accès à Doctrine à votre base de données :
 
 - __DB_DRIVER__ avec le driver de votre base de données
+- __DB_NAME__ avec le nom de votre base de données
 - __DB_HOST__ avec le DSN de votre base de données
 - __DB_USER__ avec l'utilisateur de la base de données
 - __DB_PASSWORD__ avec le mot de passe de ce dernier
