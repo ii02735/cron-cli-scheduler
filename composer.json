@@ -32,7 +32,7 @@
     "scripts":
     {
 	"post-update-cmd":[
-	      "cp --parents ../../../bin/console console"	
+	      "cp console ../../bin/"	
 	]
     }
 }
