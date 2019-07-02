@@ -28,5 +28,11 @@
         "psr-4": {
             "CronScheduler\\": "src/"
         }
+    },
+    "scripts":
+    {
+	"post-update-cmd":[
+	      "cp --parents ../../../bin/console console"	
+	]
     }
 }
