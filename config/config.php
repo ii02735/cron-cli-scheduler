@@ -8,7 +8,6 @@ $entityManagerInstance = null; #provide file path where entityManager is loaded
 //Here is declared a Dotenv instance in order to load informations from a .env file (the path in load() supposes that it is outside
 //of the project folder
 //In that case, instead of write your credentials in plain text, you load them from a file
-//You don't have to use that way, but we recommend it
 $dotenv = new Dotenv();
 
 $dotenv->load(__DIR__."/../../../../../.env");
@@ -37,13 +36,10 @@ $doctrine_parameters = [
   "password" => $_ENV["DB_PASSWORD"], #database_user_password
 ];
 
-//Provide base path where your yml is located (inside you should have written your commands that you want to add as cron jobs)
-//If null provided, "commands.yml" will be loaded by default
-$basePath = null;
 
 //Language of the interface (english => "en",french => "fr")
 
-$lang = $_ENV["CRON_SCHEDULER_LANG"];
+$lang = isset($_ENV["CRON_SCHEDULER_LANG"])?$_ENV["CRON_SCHEDULER_LANG"]:"en";
 
 //File that must be loaded for user's choices (cron:scheduler:add)
-$baseFile = __DIR__."/../../../../".$_ENV["CRON_BASE_FILE"];
+$baseFile = $_ENV["CRON_BASE_FILE"];
