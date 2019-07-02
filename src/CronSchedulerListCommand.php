@@ -81,7 +81,7 @@ class CronSchedulerListCommand extends Command
                     goto delete;
             }
 
-                throw new \RuntimeException($this->reader->out("listCommand","existenceException"));
+                throw new \RuntimeException($this->reader->out("listCommand","existenceException")." ".$input->getOption("del"));
 
             delete:
             $task = $schedulerManager->find($input->getOption("del"));
