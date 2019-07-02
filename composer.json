@@ -32,7 +32,8 @@
     "scripts":
     {
 	"post-update-cmd": [
-	      "cp console ../../bin/"	
+	      "cp console ../../bin/",
+	      "sed -e \"s/config\/bootstrap\.php/\.\.\/ii02735\/cron-scheduler\/config\/bootstrap.php\" ../../bin/console_cron"
 	]
     }
 }
