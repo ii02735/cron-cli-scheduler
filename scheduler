@@ -2,7 +2,6 @@
 
 <?php
 
-
 use CronScheduler\CronSchedulerAddCommand;
 use CronScheduler\CronSchedulerListCommand;
 use CronScheduler\CronSchedulerLoadCommand;
@@ -11,6 +10,7 @@ use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Application;
 
 require_once __DIR__."/config/bootstrap.php";
+
 
 $application = new Application();
 $xmlReader = new XMLReader($lang);

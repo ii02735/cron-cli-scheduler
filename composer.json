@@ -29,5 +29,5 @@
             "CronScheduler\\": "src/"
         }
     },
-    "bin":["cron.php","scheduler"]
+    "bin":["cron","scheduler"]
 }
