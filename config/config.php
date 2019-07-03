@@ -10,7 +10,10 @@ $entityManagerInstance = null; #provide file path where entityManager is loaded
 //In that case, instead of write your credentials in plain text, you load them from a file
 $dotenv = new Dotenv();
 
-$dotenv->load(__DIR__."/../../../../../.env");
+$dotenv->load(isset($_ENV['CRON_SCHEDULER_ENV_FILE'])
+	? getenv('CRON_SCHEDULER_ENV_FILE')
+	: getcwd() . DIRECTORY_SEPARATOR . ".cron-scheduler-env")
+;
 
 $entities_paths = [
     __DIR__."/../src/Entity" //if you create a entityManager instance
@@ -42,4 +45,7 @@ $doctrine_parameters = [
 $lang = isset($_ENV["CRON_SCHEDULER_LANG"])?$_ENV["CRON_SCHEDULER_LANG"]:"en";
 
 //File that must be loaded for user's choices (cron:scheduler:add)
-$baseFile = $_ENV["CRON_BASE_FILE"];
+$baseFile = isset($_ENV["CRON_SCHEDULER_BASE_FILE"]) 
+	? getenv('CRON_SCHEDULER_BASE_FILE')
+	: getcwd() . DIRECTORY_SEPARATOR . 'cron_scheduler_commands.yml'
+;
