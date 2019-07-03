@@ -15,6 +15,11 @@ $dotenv->load(isset($_ENV['CRON_SCHEDULER_ENV_FILE'])
 	: getcwd() . DIRECTORY_SEPARATOR . ".cron-scheduler-env")
 ;
 
+if (!ini_get('date.timezone') && !empty(getenv('CRON_SCHEDULER_DATE_TIMEZONE'))) {
+    
+    date_default_timezone_set(getenv('CRON_SCHEDULER_DATE_TIMEZONE'));
+}
+
 $entities_paths = [
     __DIR__."/../src/Entity" //if you create a entityManager instance
                              //you should provide your own paths beside that one (which is the one where is located the
