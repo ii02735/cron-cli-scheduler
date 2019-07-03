@@ -19,7 +19,7 @@ composer require ii02735/cron-scheduler
 
 #### Configuration
 
-You must provide an __environment .env file outside your project folder__ with the following environment variables in order to fill database's crendentials for Doctrine :
+You must create the __environment .cron-scheduler-env file somewhere in your project folder__ with the following environment variables in order to fill database's crendentials for Doctrine :
 
 - __DB_DRIVER__ with your database driver
 - __DB_NAME__ with your database's name
@@ -30,8 +30,9 @@ You must provide an __environment .env file outside your project folder__ with t
 #### Important
 
 - Don't forget to also add __the Entity's path__ in your Doctrine configuration in order to update your Database after with Doctrine's CLI.
-- Don't also forget to provide your YAML file with your bash commands in __CRON_BASE_FILE__ variable (refer to syntax below).
+- Don't also forget to provide your YAML file with your bash commands in __CRON_BASE_FILE__ variable (refer to syntax below)
 - You can specify the language interface in the __CRON_SCHEDULER_LANG__ variable ("en" for English by default, "fr" for French).
+- __You must be at the environment file's path in order to be able to use the package's dependency__
 
 ### Usage
 
@@ -91,7 +92,7 @@ composer require ii02735/cron-scheduler
 
 #### Configuration
 
-Vous devez fournir __un fichier d'environnement .env à l'extérieur de votre dossier de projet__ avec les variables d'environnement suivantes afin de donner accès à Doctrine à votre base de données :
+Vous devez créer __le fichier d'environnement .cron-scheduler-env quelque part dans votre dossier de projet__ avec les variables d'environnement suivantes afin de donner accès à Doctrine à votre base de données :
 
 - __DB_DRIVER__ avec le driver de votre base de données
 - __DB_NAME__ avec le nom de votre base de données
@@ -103,6 +104,7 @@ Vous devez fournir __un fichier d'environnement .env à l'extérieur de votre do
 - N'oubliez pas de préciser __le chemin de l'entité__ dans votre configuration de Doctrine afin de mettre à jour votre base de données avec le CLI de Doctrine
 - N'oubliez pas de préciser le chemin du fichier YAML avec vos commandes bash dans la variable __CRON_BASE_FILE__ (vérifier la syntaxe ci-dessous) 
 - Vous pouvez préciser la langue de l'interface dans la variable __CRON_SCHEDULER_LANG__ ("en" pour l'anglais par défaut, "fr" pour le français).
+- __Vous devez être au niveau du chemin du fichier d'environnement afin de pouvoir utiliser les commandes de la dépendance__
 
 ### Utilisation
 
