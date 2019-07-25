@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * CRONTask
  *
- * @ORM\Table(name="cronTask")
+ * @ORM\Table(name="cron_task")
  * @ORM\Entity(repositoryClass="CronScheduler\Repository\CronTaskRepository")
  */
 class CRONTask
